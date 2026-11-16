@@ -64,4 +64,41 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
     document.querySelector('#intranet-logout').addEventListener('click',lock);
   }
+
+  const calculator=document.querySelector('#borrowing-capacity-form');
+  if(calculator){
+    const incomeInput=document.querySelector('#annual-income');
+    const feedback=document.querySelector('#calculator-feedback');
+    const results=document.querySelector('#calculator-results');
+    const euro=new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR',maximumFractionDigits:0});
+    calculator.addEventListener('submit',async event=>{
+      event.preventDefault();
+      feedback.textContent='';
+      results.hidden=true;
+      const annualIncome=Number(incomeInput.value);
+      if(!Number.isFinite(annualIncome)||annualIncome<=0||annualIncome>125000){
+        feedback.textContent='Vul een jaarinkomen in tussen € 1 en € 125.000.';
+        return;
+      }
+      try{
+        const response=await fetch('assets/lti-2026.json');
+        if(!response.ok) throw new Error('Tabel niet beschikbaar');
+        const table=await response.json();
+        let incomeIndex=table.incomes.findIndex(value=>value>annualIncome)-1;
+        if(incomeIndex<0) incomeIndex=0;
+        const interestIndex=table.interestThresholds.findLastIndex(value=>value<=0.05);
+        if(incomeIndex<0||interestIndex<0) throw new Error('Geen passende tabelwaarde');
+        const percentage=table.percentages[incomeIndex][interestIndex];
+        const monthlyPayment=annualIncome/12*percentage;
+        const monthlyRate=0.05/12;
+        const annuityFactor=(1-Math.pow(1+monthlyRate,-360))/monthlyRate;
+        document.querySelector('#result-percentage').textContent=new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(percentage);
+        document.querySelector('#result-monthly').textContent=euro.format(monthlyPayment);
+        document.querySelector('#result-loan').textContent=euro.format(monthlyPayment*annuityFactor);
+        results.hidden=false;
+      }catch(error){
+        feedback.textContent='De rekentool is op dit moment niet beschikbaar. Probeer het later opnieuw.';
+      }
+    });
+  }
 });

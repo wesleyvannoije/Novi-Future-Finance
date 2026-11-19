@@ -4,7 +4,7 @@ Deze zelfstandige website is opgebouwd als statische HTML/CSS/JavaScript-site en
 
 ## Bestanden
 - `index.html` – homepage
-- `diensten.html`, `beleggen.html`, `hypotheken.html`, `tarieven.html`
+- `diensten.html`, `beleggen.html`, `hypotheken.html`, `hypotheekgids.html`, `tarieven.html`
 - `over-ons.html`, `duurzaamheid.html`, `contact.html`, `intranet.html`
 - `styles.css` – vormgeving
 - `script.js` – mobiel navigatiemenu

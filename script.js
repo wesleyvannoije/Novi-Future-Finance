@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(sessionStorage.getItem(storageKey)==='true') unlock();
     login.addEventListener('submit',event=>{
       event.preventDefault();
-      if(document.querySelector('#intranet-password').value==='wachtwoord'){
+      if(document.querySelector('#intranet-password').value==='WACHTWOORD'){
         feedback.textContent='';
         unlock();
       }else{

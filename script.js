@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       }else{
         annualIncome=Number(annualIncomeInput.value);
       }
-      if(!Number.isFinite(annualIncome)||annualIncome<=0||annualIncome>125000){
-        feedback.textContent='Het gezamenlijke bruto toetsinkomen moet hoger zijn dan € 0 en mag niet boven € 125.000 uitkomen voor deze 2026-tabel.';
+      if(!Number.isFinite(annualIncome)||annualIncome<1||annualIncome>100000000){
+        feedback.textContent='Het gezamenlijke bruto toetsinkomen moet tussen € 1 en € 100.000.000 liggen.';
         return;
       }
       try{
@@ -110,6 +110,10 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(!response.ok) throw new Error('Tabel niet beschikbaar');
         const table=await response.json();
         const roundedIncome=Math.ceil(annualIncome/1000)*1000;
+        if(roundedIncome>table.incomes[table.incomes.length-1]){
+          feedback.textContent=`Je invoer is geldig, maar de beschikbare 2026-toetstabel loopt tot en met ${euro.format(table.incomes[table.incomes.length-1])}. Voor hogere inkomens kan deze rekentool geen betrouwbare indicatie geven.`;
+          return;
+        }
         const incomeIndex=table.incomes.findIndex(value=>value>=roundedIncome);
         const selectedInterest=Number(document.querySelector('#interest-rate').value)/100;
         const interestIndex=table.interestThresholds.reduce((selected,threshold,index)=>threshold<=selectedInterest+1e-9?index:selected,-1);

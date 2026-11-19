@@ -49,13 +49,22 @@ document.addEventListener('DOMContentLoaded',()=>{
     const gate=document.querySelector('#intranet-gate');
     const content=document.querySelector('#intranet-content');
     const feedback=document.querySelector('#login-feedback');
+    const passwordInput=document.querySelector('#intranet-password');
+    const passwordToggle=document.querySelector('#toggle-intranet-password');
     const storageKey='novi-intranet-unlocked';
     const unlock=()=>{gate.hidden=true;content.hidden=false;sessionStorage.setItem(storageKey,'true');};
     const lock=()=>{content.hidden=true;gate.hidden=false;sessionStorage.removeItem(storageKey);};
+    passwordToggle.addEventListener('click',()=>{
+      const showPassword=passwordInput.type==='password';
+      passwordInput.type=showPassword?'text':'password';
+      passwordToggle.setAttribute('aria-pressed',String(showPassword));
+      passwordToggle.setAttribute('aria-label',showPassword?'Verberg wachtwoord':'Toon wachtwoord');
+      passwordToggle.classList.toggle('is-visible',showPassword);
+    });
     if(sessionStorage.getItem(storageKey)==='true') unlock();
     login.addEventListener('submit',event=>{
       event.preventDefault();
-      if(document.querySelector('#intranet-password').value==='WACHTWOORD'){
+      if(passwordInput.value==='WACHTWOORD'){
         feedback.textContent='';
         unlock();
       }else{
@@ -89,17 +98,24 @@ document.addEventListener('DOMContentLoaded',()=>{
       feedback.textContent='';
       results.hidden=true;
       let annualIncome;
+      let incomeFormula;
       if(incomeMode.value==='partners'){
-        const calculatePartnerIncome=(monthlyId,bonusId,holidayId)=>{
+        const calculatePartnerIncome=(monthlyId,bonusId,holidayId,partnerLabel)=>{
           const monthly=Number(document.querySelector(monthlyId).value)||0;
           const bonus=Number(document.querySelector(bonusId).value)||0;
           const holiday=Number(document.querySelector(holidayId).value)||0;
-          return monthly*12+bonus+monthly*12*(holiday/100);
+          const annualBase=monthly*12;
+          const annual=annualBase+bonus+annualBase*(holiday/100);
+          const percentageText=new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(holiday/100);
+          return {annual,hasIncome:monthly>0||bonus>0,formula:`${partnerLabel}: (${euro.format(monthly)} × 12) + ${euro.format(bonus)} bonus + (${percentageText} × ${euro.format(annualBase)}) vakantietoeslag = ${euro.format(annual)}`};
         };
-        annualIncome=calculatePartnerIncome('#partner1-monthly','#partner1-thirteenth','#partner1-holiday')+
-          calculatePartnerIncome('#partner2-monthly','#partner2-thirteenth','#partner2-holiday');
+        const partner1=calculatePartnerIncome('#partner1-monthly','#partner1-thirteenth','#partner1-holiday','Partner 1');
+        const partner2=calculatePartnerIncome('#partner2-monthly','#partner2-thirteenth','#partner2-holiday','Partner 2');
+        annualIncome=partner1.annual+partner2.annual;
+        incomeFormula=[partner1.formula,partner2.hasIncome?partner2.formula:'Partner 2: niet ingevuld'].join(' · ');
       }else{
         annualIncome=Number(annualIncomeInput.value);
+        incomeFormula=`Ingevuld bruto toetsinkomen: ${euro.format(annualIncome)} per jaar`;
       }
       if(!Number.isFinite(annualIncome)||annualIncome<1||annualIncome>100000000){
         feedback.textContent='Het gezamenlijke bruto toetsinkomen moet tussen € 1 en € 100.000.000 liggen.';
@@ -123,7 +139,8 @@ document.addEventListener('DOMContentLoaded',()=>{
         if(!table.energyLabelAllowance||!table.energySavingAllowance||!(label in table.energyLabelAllowance)) throw new Error('Geen energielabel geselecteerd');
         const percentage=table.percentages[incomeIndex][interestIndex];
         const maxMonthlyBeforeCredit=annualIncome/12*percentage;
-        const creditCorrection=(Number(document.querySelector('#credit-limit').value)||0)*0.02;
+        const creditLimit=Number(document.querySelector('#credit-limit').value)||0;
+        const creditCorrection=creditLimit*0.02;
         const monthlyPayment=Math.max(0,maxMonthlyBeforeCredit-creditCorrection);
         const monthlyRate=selectedInterest/12;
         const annuityFactor=(1-Math.pow(1+monthlyRate,-termMonths))/monthlyRate;
@@ -131,16 +148,23 @@ document.addEventListener('DOMContentLoaded',()=>{
         const labelAllowance=table.energyLabelAllowance[label];
         const energySavingAllowance=table.energySavingAllowance[label];
         const totalLoan=incomeBasedLoan+labelAllowance+energySavingAllowance;
+        const percentageText=new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(percentage);
+        const factorText=new Intl.NumberFormat('nl-NL',{maximumFractionDigits:2}).format(annuityFactor);
+        document.querySelector('#result-income-equation').textContent=incomeFormula;
         document.querySelector('#result-income').textContent=euro.format(annualIncome);
-        document.querySelector('#result-percentage').textContent=new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(percentage);
+        document.querySelector('#result-monthly-before-credit-equation').textContent=`${euro.format(annualIncome)} ÷ 12 × ${percentageText} = ${euro.format(maxMonthlyBeforeCredit)} per maand`;
         document.querySelector('#result-monthly-before-credit').textContent=euro.format(maxMonthlyBeforeCredit);
+        document.querySelector('#result-credit-equation').textContent=`${euro.format(creditLimit)} × 2% = ${euro.format(creditCorrection)} per maand`;
         document.querySelector('#result-credit-correction').textContent=euro.format(creditCorrection);
+        document.querySelector('#result-monthly-equation').textContent=`${euro.format(maxMonthlyBeforeCredit)} − ${euro.format(creditCorrection)} = ${euro.format(monthlyPayment)} per maand (niet lager dan € 0)`;
         document.querySelector('#result-monthly').textContent=euro.format(monthlyPayment);
+        document.querySelector('#result-loan-equation').textContent=`${euro.format(monthlyPayment)} per maand × annuïteitenfactor ${factorText} = ${euro.format(incomeBasedLoan)}`;
         document.querySelector('#result-loan').textContent=euro.format(incomeBasedLoan);
         document.querySelector('#result-label-allowance').textContent=euro.format(labelAllowance);
         document.querySelector('#result-saving-allowance').textContent=euro.format(energySavingAllowance);
+        document.querySelector('#result-total-equation').textContent=`${euro.format(incomeBasedLoan)} + ${euro.format(labelAllowance)} extra op basis van energielabel + ${euro.format(energySavingAllowance)} voor energiebesparende maatregelen = ${euro.format(totalLoan)}`;
         document.querySelector('#result-total-loan').textContent=euro.format(totalLoan);
-        document.querySelector('#result-breakdown').textContent=`In de berekening is het inkomen voor de 2026-tabel naar boven afgerond op ${euro.format(table.incomes[incomeIndex])}. De gekozen toetsrente is ${new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(selectedInterest)}. Voor de gekozen looptijd van ${termMonths/12} jaar is de annuïteitenfactor ${new Intl.NumberFormat('nl-NL',{maximumFractionDigits:2}).format(annuityFactor)}.`;
+        document.querySelector('#result-breakdown').textContent=`Voor het financieringslastpercentage is het inkomen naar boven afgerond op ${euro.format(table.incomes[incomeIndex])}. De toetsrente is ${new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(selectedInterest)} en de gekozen looptijd is ${termMonths/12} jaar.`;
         results.hidden=false;
       }catch(error){
         feedback.textContent=error.message==='Geen energielabel geselecteerd'?'Kies een energielabel om de indicatie te berekenen.':'De rekentool is op dit moment niet beschikbaar. Probeer het later opnieuw.';

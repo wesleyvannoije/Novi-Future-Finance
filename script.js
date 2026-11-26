@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   backToTop.type='button';
   backToTop.setAttribute('aria-label','Terug naar boven');
   backToTop.title='Terug naar boven';
-  backToTop.innerHTML='↑';
+  backToTop.innerHTML='⬆';
   document.body.append(backToTop);
   const updateBackToTop=()=>backToTop.classList.toggle('visible',window.scrollY>320);
   window.addEventListener('scroll',updateBackToTop,{passive:true});

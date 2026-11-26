@@ -38,7 +38,7 @@ footer{background:#0b5728;color:#ddefe1;padding:54px 0 24px}.footer-grid{display
 @media(max-width:960px){.team-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"stijn wesley" "joaquim sarah";max-width:760px;column-gap:20px;row-gap:18px}}@media(max-width:760px){.team-grid{grid-template-columns:1fr;grid-template-areas:"stijn" "wesley" "joaquim" "sarah";max-width:520px;row-gap:10px}.team-card .team-photo{height:clamp(180px,54vw,230px)}.profile-detail{grid-template-columns:1fr}.profile-portrait{max-width:440px;margin:auto}.profile-copy{order:-1}}
 .hero .hero-actions .btn,.hero .hero-actions .btn.secondary{background:var(--green);color:var(--green-dark);border-color:var(--green)}.hero .hero-actions .btn:hover,.hero .hero-actions .btn.secondary:hover{background:#fff;color:var(--green-dark);border-color:#fff;box-shadow:0 8px 20px rgba(11,87,40,.16)}
 
-.doc-workbook{gap:18px}.doc-workbook-head>div{display:grid;gap:5px}.doc-workbook-actions{display:flex;justify-content:flex-end;align-items:center}
+.doc.doc-workbook{display:flex;align-items:center;justify-content:space-between;gap:20px}.doc-workbook-head{flex:1;min-width:0}.doc-workbook-head>div{display:grid;gap:5px}.doc-workbook-actions{display:flex;flex:0 0 auto;justify-content:flex-end;align-items:center}
 .calculator-form>select,.calculator-control-grid select{width:100%;border:1px solid #d7e0da;border-radius:7px;padding:13px;font:inherit;margin:0 0 17px;background:#fcfdfb;color:var(--ink)}
 .calculator-input-grid,.calculator-control-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .calculator-person{min-width:0;margin:0;padding:18px;border:1px solid var(--line);border-radius:10px;background:#fbfdfb}

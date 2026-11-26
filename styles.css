@@ -90,3 +90,6 @@ footer{background:#0b5728;color:#ddefe1;padding:54px 0 24px}.footer-grid{display
 /* Intranet: omschrijving onder titel, documentactie in de rechterkolom */
 .doc-service-agreement{display:flex;align-items:center;justify-content:space-between;gap:20px}.doc-service-head{flex:1;min-width:0}.doc-service-head strong,.doc-service-head span{display:block}.doc-service-head span{margin-top:4px;font-size:11px;color:#788781;font-weight:500}.doc-service-actions{display:flex;flex:0 0 auto;justify-content:flex-end;align-items:center}
 @media(max-width:760px){.doc-service-agreement{align-items:flex-start;flex-direction:column;gap:8px}.doc-service-actions{align-items:flex-start}}
+
+/* Hypotheekwaarschuwing: uitlijnen over de volledige contentbreedte */
+.mortgage-notice{width:100%;max-width:none;margin:-18px 0 30px;text-align:left}

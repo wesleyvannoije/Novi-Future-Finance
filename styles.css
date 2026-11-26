@@ -87,6 +87,6 @@ footer{background:#0b5728;color:#ddefe1;padding:54px 0 24px}.footer-grid{display
 .investing-notice{max-width:780px;margin:-18px auto 30px;text-align:center}
 
 
-/* Intranet: actie Dienstverleningsovereenkomst uitlijnen in de rechterkolom */
-.doc-service-agreement{display:flex;align-items:center;justify-content:space-between;gap:20px}.doc-service-actions{display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-end;gap:5px;text-align:right}.doc-service-actions span{max-width:420px;font-size:11px;color:#788781;font-weight:500}
-@media(max-width:760px){.doc-service-agreement{align-items:flex-start;flex-direction:column;gap:8px}.doc-service-actions{align-items:flex-start;text-align:left}}
+/* Intranet: omschrijving onder titel, documentactie in de rechterkolom */
+.doc-service-agreement{display:flex;align-items:center;justify-content:space-between;gap:20px}.doc-service-head{flex:1;min-width:0}.doc-service-head strong,.doc-service-head span{display:block}.doc-service-head span{margin-top:4px;font-size:11px;color:#788781;font-weight:500}.doc-service-actions{display:flex;flex:0 0 auto;justify-content:flex-end;align-items:center}
+@media(max-width:760px){.doc-service-agreement{align-items:flex-start;flex-direction:column;gap:8px}.doc-service-actions{align-items:flex-start}}

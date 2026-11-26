@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         return;
       }
       try{
-        const response=await fetch('assets/lti-2026.json');
+        const response=await fetch('assets/lti-2026.json?v=20261126');
         if(!response.ok) throw new Error('Tabel niet beschikbaar');
         const table=await response.json();
         const roundedIncome=Math.ceil(annualIncome/1000)*1000;
@@ -160,8 +160,6 @@ document.addEventListener('DOMContentLoaded',()=>{
         document.querySelector('#result-monthly').textContent=euro.format(monthlyPayment);
         document.querySelector('#result-loan-equation').textContent=`${euro.format(monthlyPayment)} per maand × annuïteitenfactor ${factorText} = ${euro.format(incomeBasedLoan)}`;
         document.querySelector('#result-loan').textContent=euro.format(incomeBasedLoan);
-        document.querySelector('#result-label-allowance').textContent=euro.format(labelAllowance);
-        document.querySelector('#result-saving-allowance').textContent=euro.format(energySavingAllowance);
         document.querySelector('#result-total-equation').textContent=`${euro.format(incomeBasedLoan)} + ${euro.format(labelAllowance)} extra op basis van energielabel + ${euro.format(energySavingAllowance)} voor energiebesparende maatregelen = ${euro.format(totalLoan)}`;
         document.querySelector('#result-total-loan').textContent=euro.format(totalLoan);
         document.querySelector('#result-breakdown').textContent=`Voor het financieringslastpercentage is het inkomen naar boven afgerond op ${euro.format(table.incomes[incomeIndex])}. De toetsrente is ${new Intl.NumberFormat('nl-NL',{style:'percent',maximumFractionDigits:1}).format(selectedInterest)} en de gekozen looptijd is ${termMonths/12} jaar.`;
